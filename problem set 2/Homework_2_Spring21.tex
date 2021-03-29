@@ -1,0 +1,273 @@
+
+\documentclass{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amsfonts}
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Commands for customizing the assignment %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\title{
+  Machine Learning: Homework 2\\
+  \vspace{0.2cm}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Useful commands for typesetting the questions %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand \expect {\mathbb{E}}
+\newcommand \mle [1]{{\hat #1}^{\rm MLE}}
+\newcommand \map [1]{{\hat #1}^{\rm MAP}}
+\newcommand \argmax {\operatorname*{argmax}}
+\newcommand \argmin {\operatorname*{argmin}}
+\newcommand \code [1]{{\tt #1}}
+\newcommand \datacount [1]{\#\{#1\}}
+\newcommand \ind [1]{\mathbb{I}\{#1\}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Document configuration %
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Don't display a date in the title and remove the white space
+\predate{}
+\postdate{}
+\date{}
+
+% Don't display an author and remove the white space
+\preauthor{}
+\postauthor{}
+\author{}
+
+%%%%%%%%%%%%%%%%%%
+% Begin Document %
+%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\maketitle
+
+\section*{Instructions}
+\begin{itemize}
+\item {\bf Collaboration policy:} Homeworks must be done individually,
+  except where otherwise noted in the assignments. ``Individually''
+  means each student must hand in their own answers, and each student
+  must write and use their own code in the programming parts of the
+  assignment. It is acceptable for students to collaborate in figuring
+  out answers and to help each other solve the problems, though you
+  must in the end write up your own solutions individually, and you
+  must list the names of students you discussed this with.  We will be
+  assuming that, as participants in an undergraduate course, you will be
+  taking the responsibility to make sure you personally understand the
+  solution to any work arising from such collaboration.
+\item {\bf Online submission:} You must submit your solutions online
+  on
+  \href{https://newclasses.nyu.edu}{NYU Classes}. You need to submit (1) a PDF which contains the solutions to all 
+  questions (2) \texttt{x.py} or \texttt{x.ipynb} files for the programming questions. 
+  We recommend that you use \LaTeX{}, but we will accept scanned / pictured
+  solutions as well. 
+\end{itemize}
+
+
+
+\section*{Problem 1: Linear Regression}
+
+In linear regression model, we assume $y = Xw+\epsilon$, where $\epsilon$ represent the random noise and we assume $\epsilon \sim N(0, \sigma^2)$ i.i.d..  The least square estimation for the parameter is $\hat{w} = (X^TX)^{-1} X^Ty$. Since the value of $\hat{w}$ depends on the random variable $y$, $\hat{w}$ is also a random variable. We can derive the expectation of $\hat{w}$ and prove that it is an unbiased estimator for the parameter $w$
+
+\begin{enumerate}
+\item {\bf [10 Points]} Given the predictors $X$, the value of random variable $y$ is dependent on the random noise $\epsilon$. Please derive the expected value for $\hat{w}$ given $X$: $E_{\epsilon|X} [\hat{w}]$. 
+
+\item {\bf [10 Points]} Please derive the variance of $\hat{w}$. 
+
+\item {\bf [Bonus (5 Points)]} For ridge regression with shrinkage parameter $\lambda$, the parameter estimation is now $\hat{w}_{r} (\lambda) = (X^TX+\lambda I)^{-1}X^Ty$. We can show that $Var[\hat{w}_{r} (\lambda)] =\sigma^2 (X^TX+\lambda I)^{-1} (X^TX) (X^TX+\lambda I)^{-1}$. Could you prove that $ Var[\hat{w}] \geq  Var[\hat{w}_{r} (\lambda)]$ ? 
+
+\end{enumerate}
+
+
+
+\section*{Problem 2: Feature Correlation}
+
+In this problem, we will examine and compare the behavior of the Lasso
+and ridge regression in the case of an exactly repeated feature. That
+is, consider the design matrix $X\in R^{m\times d}$, where $X_{\cdot i}=X_{\cdot j}$
+for some $i$ and $j$, where $X_{\cdot i}$ is the $i^{th}$ column
+of $X$. We will see that ridge regression divides the weight equally
+among identical features, while Lasso divides the weight arbitrarily.
+In an optional part to this problem, we will consider what changes
+when $X_{\cdot i}$ and $X_{\cdot j}$ are highly correlated (e.g.
+exactly the same except for some small random noise) rather than exactly
+the same. 
+\begin{enumerate}
+\item {\bf [10 Points]} Without loss of generality, assume the first two colums of $X$ are
+our repeated features. Partition $X$ and $\theta$ as follows:\\
+\[
+X=\left(\begin{array}{ccc}
+x_{1} & x_{2} & X_{r}\end{array}\right)\qquad\theta=\left(\begin{array}{c}
+\theta_{1}\\
+\theta_{2}\\
+\theta_{r}
+\end{array}\right)
+\]
+We can write the Lasso objective function as:
+\begin{align*}
+J(\theta)= & \left\Vert X\theta-y\right\Vert _{2}^{2}+\lambda\left\Vert \theta\right\Vert _{1}\\
+= & \left\Vert x_{1}\theta_{1}+x_{2}\theta_{2}+X_{r}\theta_{r}-y\right\Vert _{2}^{2}+\lambda\vert\theta_{1}\vert+\lambda\vert\theta_{2}\vert+\lambda\left\Vert \theta_{r}\right\Vert _{1}
+\end{align*}
+With repeated features, there will be multiple minimizers of $J(\theta)$.
+Suppose that 
+\[
+\hat{\theta}=\begin{pmatrix}a\\
+b\\
+r
+\end{pmatrix}
+\]
+is a minimizer of $J(\theta)$. Give conditions on $c$ and $d$ such
+that $\left(c,d,r^{T}\right)^{T}$ is also a minimizer of $J(\theta$).
+{[}Hint: First show that $a$ and $b$ must have the same sign, or
+at least one of them is zero. Then, using this result, rewrite the
+optimization problem to derive a relation between $a$ and $b$.{]}\\
+\item {\bf [10 Points]} Using the same notation as the previous problem, suppose 
+\[
+\hat{\theta}=\begin{pmatrix}a\\
+b\\
+r
+\end{pmatrix}
+\]
+minimizes the ridge regression objective function. What is the relationship
+between $a$ and $b$, and why? \\
+\end{enumerate}
+
+
+
+\section*{Problem 3: Linear Regression Using Gradient Descent} 
+Save your code in \texttt{standardize.ipynb}  and \texttt{regression\_student.ipynb} \\
+Suppose you are selling your house and you want to know what a good market price would be. One way to do this is to first collect information on recent houses sold and make a model of housing prices. The file housing.txt contains a training set of housing prices in Portland, Oregon. The first column is the size of the house (in square feet), the second column is the number of bedrooms, and the third column is the price of the house.
+
+\begin{enumerate}
+\item {\bf [5 Points]} By looking at the values in housing.txt, you will note that house sizes are about 1000 times the number of bedrooms. When features differ by orders of magnitude, first performing feature scaling can make gradient descent converge much more quickly. \newline
+Write a program that takes as input housing.txt and creates a file called normalized.txt. To create normalized.txt, subtract the mean value of each feature from the dataset. After subtracting the mean, additionally scale (divide) the feature values by their respective standard deviations. (Starter code is given in 'stardardize.ipynb') \newline
+Implementation Note: When normalizing the features, it is important to store the values used for normalization - the mean value and the standard deviation used for the computations. After learning the parameters from the model, we often want to predict the prices of houses we have not seen before. Given a new x value (living room area and number of bedrooms), we must first normalize x using the mean and standard deviation that we had previously computed from the training set.
+
+\item {\bf [20 Points]} Our hypothesis (also called the model) will take the form $y=f(x_1, x_2) = w_0+w_1 x_1 +w_2 x_2$ where $x_1$ is the normalized size of the house, $x_2$ is the normalized number of bedrooms, and y is the predicted price of the house. In this problem, your goal is to find the values of $w_0$, $w_1$, and $w_2$ that minimize the mean squared errors (MSE). \newline
+Define the loss function $J(w)= \frac{1}{n} \sum \limits_{i=1} ^{n} (y^{i}-\hat{y^{i}})^2$, where n is the number of samples, $y^{i}$ are the observed values, $\hat{y^{i}}$ are the predicted values. 
+Implement gradient descent to find the values $w_0$, $w_1$, and $w_2$ that minimize $J(w)$. Apply your code to the normalized data set using the learning rates $\alpha = 0.01, 0.1, 0.3$. \newline
+A good way to verify that gradient descent is working correctly is to look at the value of $J(w)$ and check that it is decreasing with each step.  Assuming you have implemented gradient descent correctly and your learning rate is not too big,  your value of $J(w)$ should never increase, and should converge to a steady value by the end of the algorithm. Plot $J(w)$ for 10, 20,30,40,50, 60,70, 80 iterations for  each of your $\alpha$ values.
+
+\item {\bf [5 Points]} You will now use the w you obtained in Part 2 to predict the housing prices. 
+Predict the price of a house with 3150 square feet and 4 bedrooms. Don't forget to normalize your features when you make this prediction!
+
+\end{enumerate}
+
+
+
+
+
+\section*{Problem 4: Ridge Regression} 
+
+For the problem, we are generating some artificial data using code in the file \texttt{setup\_problem.py.} We are considering the regression
+setting with the 1-dimensional input space $R$. An image of the training data, along with the target function (i.e. the Bayes
+prediction function for the square loss function) is shown in Figure
+\ref{fig:Training-data-and-target-fn} below.
+\begin{figure}
+\begin{centering}
+\includegraphics[height=2.5in]{Figure_1.png}
+\par\end{centering}
+\caption{\label{fig:Training-data-and-target-fn}Training data and target function
+we will be considering in this assignment.}
+\end{figure}
+
+You can examine how the target function and the data were generated by looking at \texttt{setup\_problem.py.} 
+The figure can be reproduced by running the \texttt{LOAD\_PROBLEM} branch of the main function. 
+
+As you can see, the target function is a highly nonlinear function
+of the input. To handle this sort of problem with linear hypothesis
+spaces, we will need to create a set of features that perform nonlinear
+transforms of the input. A detailed description of the technique we
+will use can be found in the Jupyter notebook \texttt{basis-fns.ipynb}. 
+
+In this assignment, we are providing you with a function that takes
+care of the featurization. This is the ``featurize'' function, returned
+by the \texttt{generate\_problem} function in \texttt{setup\_problem.py}.
+The \texttt{generate\_problem} function also gives the true target
+function, which has been constructed to be a sparse linear combination
+of our features. The coefficients of this linear combination are also
+provided by \texttt{generate\_problem}, so you can compare the coefficients
+of the linear functions you find to the target function coefficients\@.
+The \texttt{generate\_problem} function also gives you the train and
+validation sets that you should use\@.
+
+To get familiar with using the data, and perhaps to learn some techniques,
+it's recommended that you work through the main() function of the
+include file ridge\_regression.py. You'll go through the following
+steps (on your own - no need to submit):
+\begin{enumerate}[(a)]
+\item Load the problem from disk into memory with load\_problem.
+\item Use the featurize function to map from a one-dimensional input space
+to a $d$-dimensional feature space.
+\item Visualize the design matrix of the featurized data. (All entries are
+binary, so we will not do any data normalization or standardization
+in this problem, though you may experiment with that on your own.)
+\item Take a look at the class \texttt{RidgeRegression}. Here we've implemented
+our own \texttt{RidgeRegression} using the general purpose optimizer
+provided by scipy.optimize. This is primarily to introduce you to
+the sklearn framework, if you are not already familiar with it. It
+can help with hyperparameter tuning, as we will see shortly.
+\item Take a look at compare\_our\_ridge\_with\_sklearn. In this function,
+we want to get some evidence that our implementation is correct, so
+we compare to sklearn's ridge regression. Comparing the outputs of
+two implementations is not always trivial \textendash{} often the
+objective functions are slightly different, so you may need to think
+a bit about how to compare the results. In this case, sklearn has
+total square loss rather than average square loss, so we needed to
+account for that. In this case, we get an almost exact match with
+sklearn. This is because ridge regression is a rather easy objective
+function to optimize. You may not get as exact a match for other objective
+functions, even if both methods are ``correct.''
+\item Next take a look at do\_grid\_search, in which we demonstrate how
+to take advantage of the fact that we've wrapped our ridge regression
+in an sklearn ``Estimator'' to do hyperparameter tuning. It's a
+little tricky to get GridSearchCV to use the train/test split that
+you want, but an approach is demonstrated in this function. In the
+line assigning the param\_grid variable, you can see my attempts at
+doing hyperparameter search on a different problem. Below you will
+be modifying this (or using some other method, if you prefer) to find
+the optimal L2 regularization parameter for the data provided.
+\end{enumerate}
+
+\subsection*{Ridge Regression}
+Save your code in \texttt{ridge\_student.ipynb}. \\
+In the problems below, you do not need to implement ridge regression.
+You may use any of the code provided in the assignment, or you may
+use other packages. However, your results must correspond to the ridge
+regression objective function that we use, namely
+\[
+J(w;\lambda)=\frac{1}{n}\sum_{i=1}^{n}\left(w^{T}x_{i}-y_{i}\right)^{2}+\lambda\|w\|^{2}.
+\]
+\begin{enumerate}
+\item {\bf [15 Points]} Run ridge regression on the provided training dataset. Choose the
+$\lambda$ that minimizes the empirical risk (i.e. the average square
+loss) on the validation set. Include a table of the parameter values
+you tried and the validation performance for each. Also include a
+plot of the results.
+\item {\bf [15 Points]} Now we want to visualize the prediction functions. On the same axes,
+plot the following: the training data, the target function, an unregularized
+least squares fit (still using the featurized data), and the prediction
+function chosen in the previous problem. 
+\\ Next, along the lines of
+the bar charts produced by the code in compare\_parameter\_vectors,
+visualize the coefficients for each of the prediction functions plotted,
+including the target function. Describe the patterns, including the
+scale of the coefficients, as well as which coefficients have the
+most weight.
+\end{enumerate}
+
+
+\end{document}
